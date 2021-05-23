@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: f5-hello-world-service-loadbalancer
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: external
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+spec:
+  type: LoadBalancer
+  selector:
+    app: f5-hello-world-web
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
