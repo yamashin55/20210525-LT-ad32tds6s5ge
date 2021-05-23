@@ -377,14 +377,13 @@
     送信元はKube-proxyのIPアドレス  
     ![NlbBrowseAccessSourceAddr](./images/09.jpg)
 
-    この表記が理解できなかった・・・  
+    この英語が理解できなかった・・・  
     [Network load balancing on Amazon EKS](https://https://docs.amazonaws.cn/en_us/eks/latest/userguide/network-load-balancing.html/)  
     > Note
     The service.beta.kubernetes.io/aws-load-balancer-type: "nlb-ip" annotation is still supported for backwards compatibility, but we recommend using the previous annotations for new load balancers instead of service.beta.kubernetes.io/aws-load-balancer-type: "nlb-ip".  
 
     AWS Load Balancer Controller をインストールしないで、NLBを使う場合、
     ```service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "ip"```  か、```service.beta.kubernetes.io/aws-load-balancer-type: "nlb-ip"```  どっち使えば良いのかわからい。。。  
-    そもそも NLB を利用する場合は、AWS Load Balancer Controller 使う方が良いのか・・・
 
 
 
@@ -526,7 +525,8 @@
     kubectl delete service f5-hello-world-service-loadbalancer
     ```
 
-AWS Load Balancer Controller がNLBをサポートしたからAWS Load Balancer ControllerからNLBを利用すれば良いと理解。。。
+NLBのターゲットグループのIPタイプは確認できず・・・・
+
 
 # Ingress Controller を使ってService公開
 
@@ -536,7 +536,7 @@ AWS Load Balancer Controller がNLBをサポートしたからAWS Load Balancer 
 
 ## AWS Load Balancer Controller でサービス公開 
 
-  ※AWS の Ingress Controller  
+  ※ AWS 版 の Ingress Controller でALBが利用される  
   ※「AWS ALB Ingress Controller」から「AWS Load Balancer Controller」に名前が変わった  
 
 ### AWS Load Balancer Controller のインストール前にServiceAccountを作成
@@ -960,3 +960,119 @@ AWS Load Balancer Controller がNLBをサポートしたからAWS Load Balancer 
     kubectl delete ingress ssl-ingress-host
     ```
 
+### Podに直接ルーティングする
+※ ```alb.ingress.kubernetes.io/target-type: ip```  
+
+1. Ingress作成
+
+    ```YAML
+    cat <<EOF > alb-ingress-target-type-ip.yaml
+    apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    metadata:
+      name: alb-ingress-type-ip
+      annotations:
+        kubernetes.io/ingress.class: alb
+        alb.ingress.kubernetes.io/target-type: ip
+        alb.ingress.kubernetes.io/scheme: internet-facing
+    spec:
+      rules:
+      - host: alb-ingress-nginx.yshin.work
+        http:
+          paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: nginx-service-nodeport
+                port:
+                  number: 80
+      - host: alb-ingress-f5.yshin.work
+        http:
+          paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: f5-hello-world-service-clusterip
+                port:
+                  number: 8080
+    EOF
+    ```
+
+1. 作成
+    ```
+    kubectl apply -f alb-ingress-target-type-ip.yaml
+
+    ```
+
+1. 確認
+
+    ```
+    kubectl describe ingress alb-ingress-type-ip
+
+
+    Warning: extensions/v1beta1 Ingress is deprecated in v1.14+, unavailable in v1.22+; use networking.k8s.io/v1 Ingress
+    Name:             alb-ingress-type-ip
+    Namespace:        default
+    Address:          k8s-default-albingre-80d1a27feb-140757370.us-east-1.elb.amazonaws.com
+    Default backend:  default-http-backend:80 (<error: endpoints "default-http-backend" not found>)
+    Rules:
+      Host                          Path  Backends
+      ----                          ----  --------
+      alb-ingress-nginx.yshin.work  
+                                    /   nginx-service-nodeport:80 (10.1.10.22:80,10.1.110.194:80)
+      alb-ingress-f5.yshin.work     
+                                    /   f5-hello-world-service-clusterip:8080 (10.1.10.170:8080,10.1.110.243:8080)
+    Annotations:                    alb.ingress.kubernetes.io/scheme: internet-facing
+                                    alb.ingress.kubernetes.io/target-type: ip
+                                    kubernetes.io/ingress.class: alb
+    Events:
+      Type    Reason                  Age   From     Message
+      ----    ------                  ----  ----     -------
+      Normal  SuccessfullyReconciled  3s    ingress  Successfully reconciled
+    ```
+
+
+1. ALBのTarget typeがIPになっているか確認
+
+      ※Target typeが **IP** になって、ルーティング先がPodsのIP：Port番号になる
+      ![AlbIngressTypeIP-1](./images/19.jpg)
+
+      ![AlbIngressTypeIP-2](./images/20.jpg)
+
+
+    ```
+    kubectl get nodes,pods -o wide
+
+    NAME                                STATUS   ROLES    AGE   VERSION              INTERNAL-IP    EXTERNAL-IP     OS-IMAGE         KERNEL-VERSION                CONTAINER-RUNTIME
+    node/ip-10-1-10-70.ec2.internal     Ready    <none>   24h   v1.19.6-eks-49a6c0   10.1.10.70     3.91.184.163    Amazon Linux 2   5.4.117-58.216.amzn2.x86_64   docker://19.3.13
+    node/ip-10-1-110-249.ec2.internal   Ready    <none>   24h   v1.19.6-eks-49a6c0   10.1.110.249   44.192.65.203   Amazon Linux 2   5.4.117-58.216.amzn2.x86_64   docker://19.3.13
+
+    NAME                                      READY   STATUS    RESTARTS   AGE    IP             NODE                           NOMINATED NODE   READINESS GATES
+    pod/f5-hello-world-web-58b6859486-m6nj4   1/1     Running   0          11h    10.1.10.170    ip-10-1-10-70.ec2.internal     <none>           <none>
+    pod/f5-hello-world-web-58b6859486-pft6n   1/1     Running   0          11h    10.1.110.243   ip-10-1-110-249.ec2.internal   <none>           <none>
+    pod/nginx-66b6c48dd5-72l6n                1/1     Running   0          4h8m   10.1.10.22     ip-10-1-10-70.ec2.internal     <none>           <none>
+    pod/nginx-66b6c48dd5-ssqtl                1/1     Running   0          4h8m   10.1.110.194   ip-10-1-110-249.ec2.internal   <none>           <none>
+    ```
+
+    ※ Podsのログを見るとALBのIPからのアクセスになっている
+    ```
+    $ kubectl logs -f f5-hello-world-web-58b6859486-m6nj4
+
+
+
+    10.1.110.240 - - [23/May/2021:22:40:19 +0000] "GET / HTTP/1.1" 200 1349 "-" "ELB-HealthChecker/2.0"
+    10.1.10.79 - - [23/May/2021:22:40:23 +0000] "GET / HTTP/1.1" 200 1349 "-" "ELB-HealthChecker/2.0"
+    10.1.110.240 - - [23/May/2021:22:40:34 +0000] "GET / HTTP/1.1" 200 1349 "-" "ELB-HealthChecker/2.0"
+    10.1.10.79 - - [23/May/2021:22:40:38 +0000] "GET / HTTP/1.1" 200 1349 "-" "ELB-HealthChecker/2.0"
+    10.1.110.240 - - [23/May/2021:22:40:49 +0000] "GET / HTTP/1.1" 200 1349 "-" "ELB-HealthChecker/2.0"
+    10.1.10.79 - - [23/May/2021:22:40:53 +0000] "GET / HTTP/1.1" 200 1349 "-" "ELB-HealthChecker/2.0"
+    10.1.110.240 - - [23/May/2021:22:41:04 +0000] "GET / HTTP/1.1" 200 1349 "-" "ELB-HealthChecker/2.0"
+    10.1.10.79 - - [23/May/2021:22:41:08 +0000] "GET / HTTP/1.1" 200 1349 "-" "ELB-HealthChecker/2.0"
+    10.1.110.240 - - [23/May/2021:22:41:19 +0000] "GET / HTTP/1.1" 200 1349 "-" "ELB-HealthChecker/2.0"
+    10.1.10.79 - - [23/May/2021:22:41:23 +0000] "GET / HTTP/1.1" 200 1349 "-" "ELB-HealthChecker/2.0"
+    ```
+
+    ※ ブラウザから確認
+    ![AlbIngressTypeIpBrowser](./images/21.jpg)
