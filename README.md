@@ -755,8 +755,6 @@ AWS Load Balancer Controller がNLBをサポートしたからAWS Load Balancer 
     aws-load-balancer-controller   1/1     1            1           87s   controller   amazon/aws-alb-ingress-controller:v2.2.0   app.kubernetes.io/component=controller,app.kubernetes.io/name=aws-load-balancer-controller
     ```
 
-
-
 ### ホスト名で振り分けする
 
 1. Service作成
@@ -962,4 +960,3 @@ AWS Load Balancer Controller がNLBをサポートしたからAWS Load Balancer 
     kubectl delete ingress ssl-ingress-host
     ```
 
-    
