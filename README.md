@@ -1056,11 +1056,9 @@ NLBのターゲットグループのIPタイプは確認できず・・・・
     pod/nginx-66b6c48dd5-ssqtl                1/1     Running   0          4h8m   10.1.110.194   ip-10-1-110-249.ec2.internal   <none>           <none>
     ```
 
-    ※ Podsのログを見るとALBのIPからのアクセスになっている
+    ※ Podsのログを見てALBから来るヘルチェックのIPを確認
     ```
     $ kubectl logs -f f5-hello-world-web-58b6859486-m6nj4
-
-
 
     10.1.110.240 - - [23/May/2021:22:40:19 +0000] "GET / HTTP/1.1" 200 1349 "-" "ELB-HealthChecker/2.0"
     10.1.10.79 - - [23/May/2021:22:40:23 +0000] "GET / HTTP/1.1" 200 1349 "-" "ELB-HealthChecker/2.0"
@@ -1074,5 +1072,5 @@ NLBのターゲットグループのIPタイプは確認できず・・・・
     10.1.10.79 - - [23/May/2021:22:41:23 +0000] "GET / HTTP/1.1" 200 1349 "-" "ELB-HealthChecker/2.0"
     ```
 
-    ※ ブラウザから確認
+    ※ ブラウザから確認。送信元はALBでSNATされたアドレス 
     ![AlbIngressTypeIpBrowser](./images/21.jpg)
