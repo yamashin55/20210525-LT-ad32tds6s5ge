@@ -144,6 +144,38 @@
     ![NodePortType](./images/02.jpg)
 
 
+1. Podからみた送信元IPは？
+
+    ![SourceAddrCheck](./images/03.jpg)
+
+    ```
+    kubectl get nodes,pods,svc -o wide -A
+
+    NAME                                STATUS   ROLES    AGE   VERSION              INTERNAL-IP    EXTERNAL-IP     OS-IMAGE         KERNEL-VERSION                CONTAINER-RUNTIME
+    node/ip-10-1-10-70.ec2.internal     Ready    <none>   13h   v1.19.6-eks-49a6c0   10.1.10.70     3.91.184.163    Amazon Linux 2   5.4.117-58.216.amzn2.x86_64   docker://19.3.13
+    node/ip-10-1-110-249.ec2.internal   Ready    <none>   13h   v1.19.6-eks-49a6c0   10.1.110.249   44.192.65.203   Amazon Linux 2   5.4.117-58.216.amzn2.x86_64   docker://19.3.13
+
+    NAMESPACE     NAME                                      READY   STATUS    RESTARTS   AGE   IP             NODE                           NOMINATED NODE   READINESS GATES
+    default       pod/f5-hello-world-web-58b6859486-m6nj4   1/1     Running   0          35m   10.1.10.170    ip-10-1-10-70.ec2.internal     <none>           <none>
+    default       pod/f5-hello-world-web-58b6859486-pft6n   1/1     Running   0          35m   10.1.110.243   ip-10-1-110-249.ec2.internal   <none>           <none>
+    default       pod/nginx-deployment-66b6c48dd5-882j9     1/1     Running   0          35m   10.1.110.171   ip-10-1-110-249.ec2.internal   <none>           <none>
+    default       pod/nginx-deployment-66b6c48dd5-vhpdb     1/1     Running   0          35m   10.1.10.71     ip-10-1-10-70.ec2.internal     <none>           <none>
+    kube-system   pod/aws-node-gl9tj                        1/1     Running   0          13h   10.1.10.70     ip-10-1-10-70.ec2.internal     <none>           <none>
+    kube-system   pod/aws-node-lvklk                        1/1     Running   0          13h   10.1.110.249   ip-10-1-110-249.ec2.internal   <none>           <none>
+    kube-system   pod/coredns-7d74b564bd-mg575              1/1     Running   0          13h   10.1.10.189    ip-10-1-10-70.ec2.internal     <none>           <none>
+    kube-system   pod/coredns-7d74b564bd-zh7bh              1/1     Running   0          13h   10.1.110.149   ip-10-1-110-249.ec2.internal   <none>           <none>
+    kube-system   pod/kube-proxy-hrchz                      1/1     Running   0          13h   10.1.110.249   ip-10-1-110-249.ec2.internal   <none>           <none>
+    kube-system   pod/kube-proxy-x7b9x                      1/1     Running   0          13h   10.1.10.70     ip-10-1-10-70.ec2.internal     <none>           <none>
+
+    NAMESPACE     NAME                                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE   SELECTOR
+    default       service/f5-hello-world-service-nodeport   NodePort    172.20.171.5    <none>        8080:30229/TCP   29m   app=f5-hello-world-web
+    default       service/kubernetes                        ClusterIP   172.20.0.1      <none>        443/TCP          13h   <none>
+    default       service/nginx-service-nodeport            NodePort    172.20.47.207   <none>        80:32682/TCP     29m   app=nginx
+    kube-system   service/kube-dns                          ClusterIP   172.20.0.10     <none>        53/UDP,53/TCP    13h   k8s-app=kube-dns
+    ```
+
+1. 一時的に許可したセキュリティグループを閉じる
+
 
 
 
