@@ -8,7 +8,7 @@
     apiVersion: apps/v1
     kind: Deployment
     metadata:
-      name: nginx-deployment
+      name: nginx
       labels:
         app: nginx
     spec:
@@ -72,8 +72,8 @@
     NAME                                  READY   STATUS    RESTARTS   AGE   IP             NODE                           NOMINATED NODE   READINESS GATES
     f5-hello-world-web-58b6859486-m6nj4   1/1     Running   0          19s   10.1.10.170    ip-10-1-10-70.ec2.internal     <none>           <none>
     f5-hello-world-web-58b6859486-pft6n   1/1     Running   0          19s   10.1.110.243   ip-10-1-110-249.ec2.internal   <none>           <none>
-    nginx-deployment-66b6c48dd5-882j9     1/1     Running   0          20s   10.1.110.171   ip-10-1-110-249.ec2.internal   <none>           <none>
-    nginx-deployment-66b6c48dd5-vhpdb     1/1     Running   0          20s   10.1.10.71     ip-10-1-10-70.ec2.internal     <none>           <none>
+    nginx-66b6c48dd5-882j9     1/1     Running   0          20s   10.1.110.171   ip-10-1-110-249.ec2.internal   <none>           <none>
+    nginx-66b6c48dd5-vhpdb     1/1     Running   0          20s   10.1.10.71     ip-10-1-10-70.ec2.internal     <none>           <none>
     ```
 
 1. NodePort で Service の作成
@@ -125,8 +125,8 @@
     NAME                                      READY   STATUS    RESTARTS   AGE     IP             NODE                           NOMINATED NODE   READINESS GATES
     pod/f5-hello-world-web-58b6859486-m6nj4   1/1     Running   0          6m27s   10.1.10.170    ip-10-1-10-70.ec2.internal     <none>           <none>
     pod/f5-hello-world-web-58b6859486-pft6n   1/1     Running   0          6m27s   10.1.110.243   ip-10-1-110-249.ec2.internal   <none>           <none>
-    pod/nginx-deployment-66b6c48dd5-882j9     1/1     Running   0          6m28s   10.1.110.171   ip-10-1-110-249.ec2.internal   <none>           <none>
-    pod/nginx-deployment-66b6c48dd5-vhpdb     1/1     Running   0          6m28s   10.1.10.71     ip-10-1-10-70.ec2.internal     <none>           <none>
+    pod/nginx-66b6c48dd5-882j9     1/1     Running   0          6m28s   10.1.110.171   ip-10-1-110-249.ec2.internal   <none>           <none>
+    pod/nginx-66b6c48dd5-vhpdb     1/1     Running   0          6m28s   10.1.10.71     ip-10-1-10-70.ec2.internal     <none>           <none>
 
     NAME                                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE   SELECTOR
     service/f5-hello-world-service-nodeport   NodePort    172.20.171.5    <none>        8080:30229/TCP   33s   app=f5-hello-world-web
@@ -158,8 +158,8 @@
     NAMESPACE     NAME                                      READY   STATUS    RESTARTS   AGE   IP             NODE                           NOMINATED NODE   READINESS GATES
     default       pod/f5-hello-world-web-58b6859486-m6nj4   1/1     Running   0          35m   10.1.10.170    ip-10-1-10-70.ec2.internal     <none>           <none>
     default       pod/f5-hello-world-web-58b6859486-pft6n   1/1     Running   0          35m   10.1.110.243   ip-10-1-110-249.ec2.internal   <none>           <none>
-    default       pod/nginx-deployment-66b6c48dd5-882j9     1/1     Running   0          35m   10.1.110.171   ip-10-1-110-249.ec2.internal   <none>           <none>
-    default       pod/nginx-deployment-66b6c48dd5-vhpdb     1/1     Running   0          35m   10.1.10.71     ip-10-1-10-70.ec2.internal     <none>           <none>
+    default       pod/nginx-66b6c48dd5-882j9     1/1     Running   0          35m   10.1.110.171   ip-10-1-110-249.ec2.internal   <none>           <none>
+    default       pod/nginx-66b6c48dd5-vhpdb     1/1     Running   0          35m   10.1.10.71     ip-10-1-10-70.ec2.internal     <none>           <none>
     kube-system   pod/aws-node-gl9tj                        1/1     Running   0          13h   10.1.10.70     ip-10-1-10-70.ec2.internal     <none>           <none>
     kube-system   pod/aws-node-lvklk                        1/1     Running   0          13h   10.1.110.249   ip-10-1-110-249.ec2.internal   <none>           <none>
     kube-system   pod/coredns-7d74b564bd-mg575              1/1     Running   0          13h   10.1.10.189    ip-10-1-10-70.ec2.internal     <none>           <none>
@@ -187,11 +187,12 @@
 
 # LoadBalancer タイプでService公開
 
-※ L4レベルのルーティング
+※ L4レベルの負荷分散  
+※ ホスト名でのService振り分け、URIベースの振り分けが必要ない場合など  
+※ HTTP/HTTPS以外のService公開など  
 
 ## Classic Load Balancer (CLB) でサービスを公開
-※ L4レベルのルーティング  
-※  ターゲットタイプがインスタンス
+※ L4  
 
 1. type: ``` LoadBalancer```で作成
 
@@ -246,8 +247,8 @@
     NAME                                      READY   STATUS    RESTARTS   AGE    IP             NODE                           NOMINATED NODE   READINESS GATES
     pod/f5-hello-world-web-58b6859486-m6nj4   1/1     Running   0          168m   10.1.10.170    ip-10-1-10-70.ec2.internal     <none>           <none>
     pod/f5-hello-world-web-58b6859486-pft6n   1/1     Running   0          168m   10.1.110.243   ip-10-1-110-249.ec2.internal   <none>           <none>
-    pod/nginx-deployment-66b6c48dd5-882j9     1/1     Running   0          168m   10.1.110.171   ip-10-1-110-249.ec2.internal   <none>           <none>
-    pod/nginx-deployment-66b6c48dd5-vhpdb     1/1     Running   0          168m   10.1.10.71     ip-10-1-10-70.ec2.internal     <none>           <none>
+    pod/nginx-66b6c48dd5-882j9     1/1     Running   0          168m   10.1.110.171   ip-10-1-110-249.ec2.internal   <none>           <none>
+    pod/nginx-66b6c48dd5-vhpdb     1/1     Running   0          168m   10.1.10.71     ip-10-1-10-70.ec2.internal     <none>           <none>
 
     NAME                                          TYPE           CLUSTER-IP      EXTERNAL-IP                                                               PORT(S)        AGE   SELECTOR
     service/f5-hello-world-service-loadbalancer   LoadBalancer   172.20.186.23   a2801d45c974d41f9a5aa83614b04071-1071771739.us-east-1.elb.amazonaws.com   80:30145/TCP   49s   app=f5-hello-world-web
@@ -274,9 +275,9 @@
 
 ## Network Load Balancer (NLB) でサービスを公開
 
-※ L4レベル  
+※ L4  
 ※ ターゲットタイプがインスタンスまたは IP ターゲット  
-※ NLB をプロビジョニングする場合は、AWS Load Balancer Controller の使用を推奨されているらしい・・・  
+※ NLB をプロビジョニングする場合は、AWS Load Balancer Controller の使用を推奨されているとの記載・・・  
 
   [Network load balancing on Amazon EKS](https://https://docs.amazonaws.cn/en_us/eks/latest/userguide/network-load-balancing.html/)
   > Important
@@ -343,8 +344,8 @@
     NAMESPACE     NAME                                      READY   STATUS    RESTARTS   AGE     IP             NODE                           NOMINATED NODE   READINESS GATES
     default       pod/f5-hello-world-web-58b6859486-m6nj4   1/1     Running   0          3h28m   10.1.10.170    ip-10-1-10-70.ec2.internal     <none>           <none>
     default       pod/f5-hello-world-web-58b6859486-pft6n   1/1     Running   0          3h28m   10.1.110.243   ip-10-1-110-249.ec2.internal   <none>           <none>
-    default       pod/nginx-deployment-66b6c48dd5-882j9     1/1     Running   0          3h28m   10.1.110.171   ip-10-1-110-249.ec2.internal   <none>           <none>
-    default       pod/nginx-deployment-66b6c48dd5-vhpdb     1/1     Running   0          3h28m   10.1.10.71     ip-10-1-10-70.ec2.internal     <none>           <none>
+    default       pod/nginx-66b6c48dd5-882j9     1/1     Running   0          3h28m   10.1.110.171   ip-10-1-110-249.ec2.internal   <none>           <none>
+    default       pod/nginx-66b6c48dd5-vhpdb     1/1     Running   0          3h28m   10.1.10.71     ip-10-1-10-70.ec2.internal     <none>           <none>
     kube-system   pod/aws-node-gl9tj                        1/1     Running   0          16h     10.1.10.70     ip-10-1-10-70.ec2.internal     <none>           <none>
     kube-system   pod/aws-node-lvklk                        1/1     Running   0          16h     10.1.110.249   ip-10-1-110-249.ec2.internal   <none>           <none>
     kube-system   pod/coredns-7d74b564bd-mg575              1/1     Running   0          16h     10.1.10.189    ip-10-1-10-70.ec2.internal     <none>           <none>
@@ -382,7 +383,7 @@
     The service.beta.kubernetes.io/aws-load-balancer-type: "nlb-ip" annotation is still supported for backwards compatibility, but we recommend using the previous annotations for new load balancers instead of service.beta.kubernetes.io/aws-load-balancer-type: "nlb-ip".  
 
     AWS Load Balancer Controller をインストールしないで、NLBを使う場合、
-    ```service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "ip"```  か、```service.beta.kubernetes.io/aws-load-balancer-type: "nlb-ip"```  を使えうんだと思うけどどっちが正しいのかわからなかった。  
+    ```service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "ip"```  か、```service.beta.kubernetes.io/aws-load-balancer-type: "nlb-ip"```  どっち使えば良いのかわからい。。。  
     そもそも NLB を利用する場合は、AWS Load Balancer Controller 使う方が良いのか・・・
 
 
@@ -525,17 +526,18 @@
     kubectl delete service f5-hello-world-service-loadbalancer
     ```
 
+AWS Load Balancer Controller がNLBをサポートしたからAWS Load Balancer ControllerからNLBを利用すれば良いと理解。。。
 
 # Ingress Controller を使ってService公開
 
+※ Ingress Controller の種類 : [Ingress Controller](https://kubernetes.io/ja/docs/concepts/services-networking/ingress-controllers/#additional-controllers)  
 ※ L7 ホスト名、URI Path ベースのルーティング  
 ※ HTTP/HTTPS が対象  
 
 ## AWS Load Balancer Controller でサービス公開 
 
   ※AWS の Ingress Controller  
-  ※「ALB Ingress Controller」から名前が変わった  
-  ※
+  ※「AWS ALB Ingress Controller」から「AWS Load Balancer Controller」に名前が変わった  
 
 ### AWS Load Balancer Controller のインストール前にServiceAccountを作成
 
@@ -753,3 +755,211 @@
     aws-load-balancer-controller   1/1     1            1           87s   controller   amazon/aws-alb-ingress-controller:v2.2.0   app.kubernetes.io/component=controller,app.kubernetes.io/name=aws-load-balancer-controller
     ```
 
+
+
+### ホスト名で振り分けする
+
+1. Service作成
+
+    ```YAML
+    cat <<EOF > service-nginx-nodeport.yaml
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: nginx-service-nodeport
+    spec:
+      type: NodePort
+      selector:
+        app: nginx
+      ports:
+        - protocol: TCP
+          port: 80
+          targetPort: 80
+    EOF
+    ```
+
+    ```YAML
+    cat <<EOF > service-f5-web-clusterip.yaml
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: f5-hello-world-service-nodeport
+      namespace: default
+    spec:
+      type: NodePort
+      ports:
+      - name: f5-hello-world-web
+        port: 8080
+        protocol: TCP
+        targetPort: 8080
+      selector:
+        app: f5-hello-world-web
+    EOF
+    ```
+
+1. 作成
+    ```
+    kubectl apply -f service-nginx-nodeport.yaml
+    kubectl apply -f service-f5-web-clusterip.yaml
+    ```
+
+1. Ingress 作成
+
+    ※ ホスト名で分岐
+
+    ```YAML
+    cat <<EOF > ingress-alb-1.yaml
+    apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    metadata:
+      name: name-virtual-host-ingress-no-third-host
+      annotations:
+        alb.ingress.kubernetes.io/scheme: internet-facing
+        kubernetes.io/ingress.class: alb
+    spec:
+      rules:
+      - host: alb-ingress-nginx.yshin.work
+        http:
+          paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: nginx-service-nodeport
+                port:
+                  number: 80
+      - host: alb-ingress-f5.yshin.work
+        http:
+          paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: f5-hello-world-service-nodeport
+                port:
+                  number: 8080
+    EOF
+    ```
+
+1. 作成
+
+    ```
+    kubectl apply -f ingress-alb-1.yaml
+    ```
+
+
+1. 確認
+
+    ```
+    kubectl get ingress
+
+    NAME                                      CLASS    HOSTS                                                    ADDRESS                                                                  PORTS   AGE
+    name-virtual-host-ingress-no-third-host   <none>   alb-ingress-nginx.yshin.work,alb-ingress-f5.yshin.work   k8s-default-namevirt-e2a31bd375-1628954471.us-east-1.elb.amazonaws.com   80      2m6s
+    ```
+
+
+1. ALB として作成される
+
+    ![AlbIngress](./images/12.jpg)
+
+1. ALB のルールにもホストベースの振り分け
+
+    ![AlbIngressRule](./images/13.jpg)
+
+1. Hostヘッダー付けて接続確認
+
+    ※ -H "Host: **alb-ingress-nginx.yshin.work"**  
+    ※ **k8s-default-namevirt-e2a3.......** 作成されたIngressのアクセス先FQDN
+    ```
+    curl -s -H "Host: alb-ingress-nginx.yshin.work" k8s-default-namevirt-e2a31bd375-1628954471.us-east-1.elb.amazonaws.com | grep title
+
+    <title>Welcome to nginx!</title>
+    ```
+
+    ```
+    curl -s -H "Host: alb-ingress-f5.yshin.work" k8s-default-namevirt-e2a31bd375-1628954471.us-east-1.elb.amazonaws.com | grep title
+
+    <title>hello, world</title>
+    ```
+
+1. Route53 を変更してブラウザから確認する
+
+    ※ 事前にRoute53に対象のドメインが登録しある前提  
+    ※ ```alb-ingress-f5.yshin.work``` と ```alb-ingress-nginx.yshin.work``` の名前解決を ALB (Ingress)の名前にむける
+
+    ![AlbIngressRule](./images/14.jpg)
+
+    ※ ホスト名毎に振り分け
+    ![AlbIngressRule](./images/15.jpg)
+
+1. 削除
+
+    ```
+    kubectl delete ingress name-virtual-host-ingress-no-third-host
+    ```
+
+### HTTPS(SSL) 通信する
+
+※ alb.ingress.kubernetes.io/certificate-arn のAnnotation が指定されていない場合、ALBリスナーのTLS証明書は、Ingressリソースからのホスト名を使用して自動的に検出される  
+
+※ Cert Managerに証明書は事前登録しとく
+    ![AlbIngressRule](./images/16.jpg)
+
+
+1. Ingress HTTPSで作成
+
+    ```YAML
+    apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    metadata:
+      name: ssl-ingress-host
+      annotations:
+        alb.ingress.kubernetes.io/scheme: internet-facing
+        kubernetes.io/ingress.class: alb
+        alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
+    spec:
+      rules:
+      - host: alb-ingress-f5.yshin.work
+        http:
+          paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: f5-hello-world-service-nodeport
+                port:
+                  number: 8080
+      - host: alb-ingress-nginx.yshin.work
+        http:
+          paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: nginx-service-nodeport
+                port:
+    EOF
+    ```
+    ```
+    kubectl apply -f ingress-alb-2.yaml
+    ```
+
+1. Route53のDNSを先ほどと同様に変更
+
+1. ブラウザからアクセス確認
+
+    ※ HTTPS(SSL)  
+    ![AlbIngressSSL1](./images/17.jpg)
+
+
+    ※ ALBに証明書が設定されている
+    ![AlbIngressSSL2](./images/18.jpg)
+
+
+1. 削除
+
+    ```
+    kubectl delete ingress ssl-ingress-host
+    ```
+
+    
