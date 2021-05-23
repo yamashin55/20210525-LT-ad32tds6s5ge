@@ -961,7 +961,7 @@ NLBのターゲットグループのIPタイプは確認できず・・・・
     ```
 
 ### Podに直接ルーティングする
-※ ```alb.ingress.kubernetes.io/target-type: ip```  
+※ ```alb.ingress.kubernetes.io/target-type: ip``` のアノテーションに変更  
 
 1. Ingress作成
 
@@ -1074,3 +1074,19 @@ NLBのターゲットグループのIPタイプは確認できず・・・・
 
     ※ ブラウザから確認。送信元はALBでSNATされたアドレス 
     ![AlbIngressTypeIpBrowser](./images/21.jpg)
+
+1. 削除
+
+    ```kubectl delete ingress alb-ingress-type-ip ```  
+
+
+---
+
+# [Issues](https://github.com/kubernetes-sigs/aws-load-balancer-controller/issues)
+
+## URLのRewriteが対応してない。  
+　※ NGINX Ingress Controller では、 ```nginx.ingress.kubernetes .io/rewrite-target: ``` が使える
+1. https://github.com/kubernetes-sigs/aws-load-balancer-controller/issues/835
+1. https://github.com/kubernetes-sigs/aws-load-balancer-controller/issues/1268
+
+
