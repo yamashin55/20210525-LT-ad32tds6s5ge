@@ -134,8 +134,14 @@
     service/nginx-service-nodeport            NodePort    172.20.47.207   <none>        80:32682/TCP     33s   app=nginx
     ```
 
+1. NodePortで接続テストするために、セキュリティグループを変更  
+※一時的にクラスター外・インターネットからのアクセスを許可
 
+    ![AllowSecurityGroup](./images/01.jpg)
 
+1. 確認
+
+    ![NodePortType](./images/02.jpg)
 
 
 
