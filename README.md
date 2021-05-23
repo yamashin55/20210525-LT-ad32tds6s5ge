@@ -374,7 +374,7 @@
 
     ![NlbBrowserAccess](./images/06.jpg)
 
-    送信元はKube-proxyのIPアドレス
+    送信元はKube-proxyのIPアドレス  
     ![NlbBrowseAccessSourceAddr](./images/09.jpg)
 
     この表記が理解できなかった・・・  
@@ -950,7 +950,7 @@ AWS Load Balancer Controller がNLBをサポートしたからAWS Load Balancer 
     ![AlbIngressSSL1](./images/17.jpg)
 
 
-    ※ ALBに証明書が設定されている
+    ※ ALBに証明書が設定されている  
     ![AlbIngressSSL2](./images/18.jpg)
 
 
