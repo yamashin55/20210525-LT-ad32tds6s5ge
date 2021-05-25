@@ -1076,6 +1076,16 @@ NLBのターゲットグループのIPタイプは確認できず・・・・
 
     ```kubectl delete ingress alb-ingress-type-ip ```  
 
+## AWS Load balancer controller(Ingress) から NLB を使う
+
+1. Ingressの作成
+
+1. 適用
+
+1. 確認
+
+
+
 
 ---
 
