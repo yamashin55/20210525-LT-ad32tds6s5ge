@@ -189,10 +189,8 @@
 
 ※ L4レベルの負荷分散  
 ※ ホスト名でのService振り分け、URIベースの振り分けが必要ない場合など  
-※ HTTP/HTTPS以外のService公開など  
 
 ## Classic Load Balancer (CLB) でサービスを公開
-※ L4  
 
 1. type: ``` LoadBalancer```で作成
 
@@ -275,7 +273,6 @@
 
 ## Network Load Balancer (NLB) でサービスを公開
 
-※ L4  
 ※ ターゲットタイプがインスタンスまたは IP ターゲット  
 ※ NLB をプロビジョニングする場合は、AWS Load Balancer Controller の使用を推奨されているとの記載・・・  
 
@@ -536,7 +533,7 @@ NLBのターゲットグループのIPタイプは確認できず・・・・
 
 ## AWS Load Balancer Controller でサービス公開 
 
-  ※ AWS 版 の Ingress Controller でALBが利用される  
+  ※ AWS 版 の Ingress Controller でAWS ALBが利用される  
   ※「AWS ALB Ingress Controller」から「AWS Load Balancer Controller」に名前が変わった  
 
 ### AWS Load Balancer Controller のインストール前にServiceAccountを作成
