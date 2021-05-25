@@ -596,9 +596,9 @@ NLBのターゲットグループのIPタイプは確認できず・・・・
     ```
 
     ※ --cluster=**demo-cluster-3498582762** をEKSクラスタ名に変更  
-    ※ --attach-policy-arn=**arn:aws:iam::673420076654:policy/AWSLoadBalancerControllerIAMPolicy** をコピーしたARNに変更
+    ※ --attach-policy-arn=**arn:aws:iam::XXXXXXXX:policy/AWSLoadBalancerControllerIAMPolicy** をコピーしたARNに変更
     ```
-    eksctl create iamserviceaccount --cluster=demo-cluster-3498582762 --namespace=kube-system  --name=aws-load-balancer-controller  --attach-policy-arn=arn:aws:iam::673420076654:policy/AWSLoadBalancerControllerIAMPolicy  --override-existing-serviceaccounts  --approve
+    eksctl create iamserviceaccount --cluster=demo-cluster-3498582762 --namespace=kube-system  --name=aws-load-balancer-controller  --attach-policy-arn=arn:aws:iam::XXXXXXXX:policy/AWSLoadBalancerControllerIAMPolicy  --override-existing-serviceaccounts  --approve
 
 
     2021-05-23 17:29:06 [ℹ]  eksctl version 0.51.0
@@ -966,7 +966,7 @@ NLBのターゲットグループのIPタイプは確認できず・・・・
 1. Ingress作成
 
     ```YAML
-    cat <<EOF > alb-ingress-target-type-ip.yaml
+    cat <<EOF > ingress-alb-target-type-ip.yaml
     apiVersion: networking.k8s.io/v1
     kind: Ingress
     metadata:
@@ -1002,7 +1002,7 @@ NLBのターゲットグループのIPタイプは確認できず・・・・
 
 1. 作成
     ```
-    kubectl apply -f alb-ingress-target-type-ip.yaml
+    kubectl apply -f ingress-alb-target-type-ip.yaml
 
     ```
 
